@@ -29,55 +29,45 @@ interface ActionButton {
 struct Index {
   @State message: string = '主页'
   @State searchKey: string = ''
+  @State ActionButtonOptionWidth: number = 0;
+
   scroller: Scroller = new Scroller()
   @State actionButtons: ActionButton[] = [
     {
       iconName: 'fire',
-      title: '推荐歌单',
+      title: '菜单1',
       action() {
-        console.log("点击-推荐歌单");
-        // navigate(ROUTE_PATH.ALIYUNPAN);
       }
 
     },
     {
       iconName: 'trophy',
-      title: '榜单',
+      title: '菜单2',
       action() {
-        console.log("点击-榜单");
-        // navigate(ROUTE_PATH.ALIYUNPAN);
       }
     },
     {
       iconName: 'clock-outline',
-      title: '播放记录',
+      title: '菜单2',
       action() {
-        console.log("点击-播放记录");
-        // navigate(ROUTE_PATH.ALIYUNPAN);
       }
     },
     {
       iconName: 'folder-music-outline',
-      title: '本地音乐',
+      title: '菜单4',
       action() {
-        console.log("点击-本地音乐");
-        // navigate(ROUTE_PATH.ALIYUNPAN);
       }
     },
     {
       iconName: 'aliyunpan',
-      title: '阿里云盘',
+      title: '菜单5',
       action() {
-        console.log("点击-阿里云盘");
-        // navigate(ROUTE_PATH.ALIYUNPAN);
       }
     },
     {
       iconName: 'aliyunpan',
-      title: '阿里云盘',
+      title: '菜单6',
       action() {
-        console.log("点击-阿里云盘");
-        // navigate(ROUTE_PATH.ALIYUNPAN);
       }
     }
   ]
@@ -98,10 +88,12 @@ struct Index {
           }
         }
 
-      }, (item: ActionButton, index?: number) => index + JSON.stringify(item))
+      }, (item: ActionButton, index?: number) => {
+        return index + JSON.stringify(item);
+      })
     }
     .height('70vp')
-    .width('100%')
+    .width((this.actionButtons.length * 70) + 'vp')
     .justifyContent(FlexAlign.SpaceBetween)
   }
 
