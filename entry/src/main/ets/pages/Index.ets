@@ -48,25 +48,19 @@ struct Index {
     },
     {
       iconName: 'clock-outline',
-      title: '菜单2',
+      title: '播放记录3',
       action() {
       }
     },
     {
       iconName: 'folder-music-outline',
-      title: '菜单4',
+      title: '本地音乐4',
       action() {
       }
     },
     {
-      iconName: 'aliyunpan',
-      title: '菜单5',
-      action() {
-      }
-    },
-    {
-      iconName: 'aliyunpan',
-      title: '菜单6',
+      iconName: 'folder-music-outline',
+      title: '阿里云盘5',
       action() {
       }
     }
@@ -75,17 +69,19 @@ struct Index {
   @Builder
   ActionButtonOptions() {
     Row() {
-      ForEach(this.actionButtons, (item: ActionButton) => {
+      ForEach(this.actionButtons, (item: ActionButton, index: number) => {
         Column({ space: 4 }) {
-          Button() {
             Text(item.title)
               .backgroundColor(0xFFFFFF)
               .borderRadius(12)
               .fontSize(14)
               .textAlign(TextAlign.Center)
-              .width('70vp')
+              .width('82vp')
               .height('65vp')
-          }
+              .margin({
+                left: '10vp'//index % 4 ? '10vp' : (index == this.actionButtons.length - 1 && this.actionButtons.length % 2 != 0) ? '10vp' : '0vp'
+              })
+
         }
 
       }, (item: ActionButton, index?: number) => {
@@ -93,7 +89,7 @@ struct Index {
       })
     }
     .height('70vp')
-    .width((this.actionButtons.length * 70) + 'vp')
+    .width((this.actionButtons.length * 82 + this.actionButtons.length * 10) + 'vp')
     .justifyContent(FlexAlign.SpaceBetween)
   }
 
@@ -127,24 +123,24 @@ struct Index {
             this.ActionButtonOptions()
           }
           .scrollable(ScrollDirection.Horizontal) // 滚动方向横向
-          .scrollBar(BarState.On) // 滚动条常驻显示
-          .scrollBarColor(Color.Gray) // 滚动条颜色
-          .scrollBarWidth(10) // 滚动条宽度
-          .friction(0.6)
-          .edgeEffect(EdgeEffect.None)
-          .onWillScroll((xOffset: number, yOffset: number, scrollState: ScrollState) => {
-            console.info(xOffset + ' ' + yOffset)
-          })
-          .onScrollEdge((side: Edge) => {
-            console.info('To the edge')
-          })
-          .onScrollStop(() => {
-            console.info('Scroll Stop')
-          })
+          .scrollBar(BarState.Off) // 滚动条常驻显示
+          // .scrollBarColor(Color.Gray) // 滚动条颜色
+          // .scrollBarWidth(10) // 滚动条宽度
+          // .friction(0.6)
+          // .edgeEffect(EdgeEffect.None)
+          // .onWillScroll((xOffset: number, yOffset: number, scrollState: ScrollState) => {
+          //   console.info(xOffset + ' ' + yOffset)
+          // })
+          // .onScrollEdge((side: Edge) => {
+          //   console.info('To the edge')
+          // })
+          // .onScrollStop(() => {
+          //   console.info('Scroll Stop')
+          // })
         }
         .width('100%')
-        // .padding('10vp')
-        .height('70vp')
+        .padding({left: '10vp',right: '10vp'})
+        .height('80vp')
         .backgroundColor("#1a182431")
 
         // 我的歌单列表
