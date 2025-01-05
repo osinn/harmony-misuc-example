@@ -32,29 +32,29 @@ struct Second {
         .width('40%')
         .height('5%')
         .onClick(() =>{
-          let applicationContext = this.context.getApplicationContext();
-          let cacheDir = this.context.cacheDir;
-          let tempDir = this.context.tempDir;
-          let filesDir = this.context.filesDir;
-          let databaseDir = this.context.databaseDir;
-          let bundleCodeDir = this.context.bundleCodeDir;
-          let distributedFilesDir = this.context.distributedFilesDir;
-          let preferencesDir = this.context.preferencesDir;
-          let cloudFileDir = applicationContext.cloudFileDir;
-
-
-          let filePath = '/data/storage/el2/test/test.txt';
-
-          console.log("1212文件路径：")
-          console.log(cacheDir)
-          console.log(tempDir)
-          console.log(filesDir)
-          console.log(databaseDir)
-          console.log(bundleCodeDir)
-          console.log(distributedFilesDir)
-          console.log(preferencesDir)
-          console.log(cloudFileDir)
-          console.log("获取传递参数121：", JSON.stringify(obj))
+          // let applicationContext = this.context.getApplicationContext();
+          // let cacheDir = this.context.cacheDir;
+          // let tempDir = this.context.tempDir;
+          // let filesDir = this.context.filesDir;
+          // let databaseDir = this.context.databaseDir;
+          // let bundleCodeDir = this.context.bundleCodeDir;
+          // let distributedFilesDir = this.context.distributedFilesDir;
+          // let preferencesDir = this.context.preferencesDir;
+          // let cloudFileDir = applicationContext.cloudFileDir;
+          //
+          //
+          // let filePath = '/data/storage/el2/test/test.txt';
+          //
+          // console.log("1212文件路径：")
+          // console.log(cacheDir)
+          // console.log(tempDir)
+          // console.log(filesDir)
+          // console.log(databaseDir)
+          // console.log(bundleCodeDir)
+          // console.log(distributedFilesDir)
+          // console.log(preferencesDir)
+          // console.log(cloudFileDir)
+          // console.log("获取传递参数121：", JSON.stringify(obj))
           router.back()
         })
       }

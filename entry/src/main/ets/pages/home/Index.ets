@@ -18,7 +18,27 @@ struct Index {
   @State message: string = '主页'
   @State isVertical: boolean = false;// 是否纵屏状态
 
-  aboutToAppear() {
+  async  aboutToAppear() {
+
+    // 获取状态栏高度
+    // window.getLastWindow(getContext(this)).then((data: window.Window) => {
+    //   // 状态栏高度
+    //   this.model.statusBarHeight = DrawerLayout.Utils.toVp(data.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM)
+    //     .topRect
+    //     .height);
+    //   // 初始化数据
+    //   this.initData();
+    //   // 绑定回调函数 绑定当前应用实例
+    //   this.mediaqueryListener.on('change', this.onPortrait.bind(this));
+    //   // 监听切换左右侧边栏
+    //   this.model.drawerTypeChangeCallback = (dt: DrawerLayout.Type) => {
+    //     this.currentDrawerType = dt;
+    //   }
+    // })
+
+    let d = await display.getDefaultDisplaySync()
+    this.isVertical = d.rotation == 0 || d.rotation == 2;
+
     this.setOrientation()
 
     let callback = async () => {
