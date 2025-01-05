@@ -10,6 +10,7 @@ import { NavBar } from './components/NavBar'
 import { HomeBody } from './components/homeBody/Index'
 import { HomeBodyHorizontal } from './components/homeBodyHorizontal/Index'
 import { display, window } from '@kit.ArkUI';
+import { SkinTheme } from '../../skin/Theme'
 
 const TAG = 'foo'
 @Entry
@@ -17,7 +18,8 @@ const TAG = 'foo'
 struct Index {
   @State message: string = '主页'
   @State isVertical: boolean = false;// 是否纵屏状态
-
+  @State isShowSideBar: boolean = false;
+  @State theme: SkinTheme.Theme = SkinTheme.getTheme(1);
   async  aboutToAppear() {
 
     // 获取状态栏高度
@@ -86,13 +88,39 @@ struct Index {
   build() {
     Row() {
       Column() {
-        // 顶部搜索
-        NavBar()
-        if (this.isVertical) {
-          HomeBody()
-        } else {
-          HomeBodyHorizontal();
+        SideBarContainer(SideBarContainerType.Overlay){
+          Column(){
+            Text('侧边栏内容')
+            Button('关闭')
+              .onClick(()=>{
+                animateTo({duration: 550},()=>{this.isShowSideBar = false}) //动画关闭侧边栏
+              })
+          }
+          .height('100%')
+          .width('60%')
+          .backgroundColor(Color.Pink)
+          Column(){
+            // 顶部搜索
+            NavBar({ openDrawer: () => {
+              animateTo({duration: 550},()=>{this.isShowSideBar = true})
+            }})
+            if (this.isVertical) {
+              HomeBody()
+            } else {
+              HomeBodyHorizontal();
+            }
+          }
+          .backgroundColor(this.theme.background_color)
+          .onTouch((event) => { //监听手指右边滑动和点击事件
+            if (event.type == TouchType.Down && this.isShowSideBar) {
+              animateTo({duration: 550}, () => {this.isShowSideBar = false})
+            }
+          })
         }
+        .showSideBar($$this.isShowSideBar) //不显示侧边栏
+        .showControlButton(false) //不显示控制按钮
+        .sideBarWidth('80%')  //侧边栏宽度
+        .maxSideBarWidth('100%')//最大宽度
       }
     }
     .height('100%')
