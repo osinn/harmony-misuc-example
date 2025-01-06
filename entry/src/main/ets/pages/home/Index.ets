@@ -10,7 +10,7 @@ import { NavBar } from './components/NavBar'
 import { HomeBody } from './components/homeBody/Index'
 import { HomeBodyHorizontal } from './components/homeBodyHorizontal/Index'
 import { display, window } from '@kit.ArkUI';
-import { SkinTheme } from '../../skin/Theme'
+import { SkinTheme } from '../../core/Theme'
 
 const TAG = 'foo'
 @Entry
@@ -19,7 +19,7 @@ struct Index {
   @State message: string = '主页'
   @State isVertical: boolean = false;// 是否纵屏状态
   @State isShowSideBar: boolean = false;
-  @State theme: SkinTheme.Theme = SkinTheme.getTheme(1);
+  @State theme: SkinTheme.Theme = SkinTheme.getTheme();
   async  aboutToAppear() {
 
     // 获取状态栏高度
@@ -110,7 +110,8 @@ struct Index {
               HomeBodyHorizontal();
             }
           }
-          .backgroundColor(this.theme.background_color)
+          .width('100%')
+          .height('100%')
           .onTouch((event) => { //监听手指右边滑动和点击事件
             if (event.type == TouchType.Down && this.isShowSideBar) {
               animateTo({duration: 550}, () => {this.isShowSideBar = false})

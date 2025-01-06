@@ -1,5 +1,10 @@
+
+import { SkinTheme } from '../../../core/Theme'
+
 @Component
 export struct Sheets {
+
+  @State theme: SkinTheme.Theme = SkinTheme.getTheme();
   @State currentIndex: number = 0;
 
   @Builder
@@ -7,7 +12,7 @@ export struct Sheets {
     Row() {
       Column() {
         Text(name)
-          // .fontColor('#FFFFFF')
+          .fontColor(this.theme.fontColor)
           .margin({ bottom: 5 })
           .onClick(() => {
             this.currentIndex = index;
@@ -15,7 +20,7 @@ export struct Sheets {
         Divider()
           .width('100%')
           .strokeWidth(2)
-          .color('#0A59F7')
+          .color(this.theme.dividerColor)
           .opacity(this.currentIndex === index ? 1 : 0)
       }
       .width('70vp')
@@ -24,7 +29,7 @@ export struct Sheets {
       Column() {
         Text(`(${musicNumb})`)// .lineHeight(7)
           .fontSize(12)
-          // .fontColor('#FFFFFF')
+          .fontColor(this.theme.fontColor)
       }
       .height('30vp')
     }
@@ -55,21 +60,25 @@ export struct Sheets {
           // 新建歌单、导入歌单
           Column() {
             Row() {
+
               Image($r("app.media.ic_plus"))
                 .width('20vp')
                 .height('18vp')
-                // .fillColor('#FFFFFF')
+                .fillColor(this.theme.iconColor)
                 .margin({ right: '10vp' })
                 .onClick(e => {
                   console.log("点击搜索：");
                 })
-              Image($r("app.media.ic_inbox_arrow_down"))
+
+              Image($r("app.media.ic_arrow_down_and_rectangle_on_rectangle"))
                 .width('20vp')
                 .height('18vp')
                 .margin({ right: '10vp' })
+                .fillColor(this.theme.iconColor)
                 .onClick(e => {
-                  console.log("点击搜索：");
+
                 })
+
             }
 
             .height('30vp')
@@ -77,7 +86,7 @@ export struct Sheets {
           // .flexBasis(200)
           .width(100)
           .height('100%')
-          // .backgroundColor("#000000")
+          // .backgroundColor("#343434")
           .alignItems(HorizontalAlign.End)
           .justifyContent(FlexAlign.End)
         }
@@ -96,7 +105,7 @@ export struct Sheets {
         }
         .height('100%')
         .width('100%')
-        .backgroundColor("#67C23A")
+        // .backgroundColor("#67C23A")
       }
       .width('100%')
       .height('100%')

@@ -2,11 +2,13 @@
 import {Operations} from './Operations'
 
 import {Sheets} from '../Sheets'
+import { SkinTheme } from '../../../../core/Theme'
 
 @Component
 export  struct HomeBody {
-
+  @State theme: SkinTheme.Theme = SkinTheme.getTheme();
   scroller: Scroller = new Scroller()
+
   build() {
     Row() {
       Column() {
@@ -20,7 +22,7 @@ export  struct HomeBody {
         .width('100%')
         .padding({left: '10vp',right: '10vp'})
         .height('80vp')
-        .backgroundColor("#1a182431")
+        .backgroundColor(this.theme.pageBackgroundColor)
 
         Sheets();
       }

@@ -4,24 +4,42 @@ export namespace SkinTheme {
   declare type THEME = Resource | string | Color;
 
   export interface Theme {
-    page_background: THEME;
-    background_color: THEME;
-    text_color: THEME;
-    placeholder: THEME;
+    pageBackgroundColor: THEME;
+    backgroundColor: THEME;
+    searchBackgroundColor: THEME;
+    gridBackgroundColor: THEME;
+    background: THEME;
+    fontColor: THEME;
+    fillColor: THEME;
+    placeholderColor: THEME;
+    dividerColor: THEME;
+    iconColor: THEME;
   }
 
   class LightTheme implements Theme {
-    page_background = 'transparent';
-    background_color = "#eeeeee";
-    text_color = Color.Black;
-    placeholder = Color.Black;
+    searchBackgroundColor = 'rgba(234, 234, 234, 0.4)';
+    gridBackgroundColor = 'rgba(234, 234, 234, 0.4)';
+    pageBackgroundColor = Color.White;
+    backgroundColor = '';
+    background = '';
+    fontColor = '#343434';
+    fillColor = '';
+    iconColor = '#343434';
+    placeholderColor = '';
+    dividerColor = '#71c9ce';
   }
 
   class DarkTheme implements Theme {
-    page_background = 'transparent';
-    background_color = '#202020';
-    text_color = '#fcfcfc';
-    placeholder = 'rgba(66,66,66, 0.5)';
+    searchBackgroundColor = 'transparent';
+    gridBackgroundColor = 'transparent';
+    pageBackgroundColor = 'transparent';
+    backgroundColor = 'transparent';
+    background = '#202020';
+    fontColor = '#fcfcfc';
+    fillColor = '#fcfcfc';
+    iconColor = '#fcfcfc';
+    placeholderColor = 'rgba(66,66,66, 0.5)';
+    dividerColor = 'rgba(66,66,66, 0.5)';
   }
 
   // background: 'transparent',
@@ -44,7 +62,7 @@ export namespace SkinTheme {
   // danger: '#FC5F5F',
   // info: '#0A95C8',
   // card: '#33333388',
-  export function getTheme(theme: number = 1): Theme {
+  export function getTheme(theme: number = 0): Theme {
     // let key = "app_global_theme_" + theme;
     // var cachedTheme = DataManager.getDataSource().getData(key, null);
     // if (!cachedTheme) {

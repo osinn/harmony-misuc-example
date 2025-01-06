@@ -1,4 +1,6 @@
 
+import { SkinTheme } from '../../../../core/Theme'
+import { mediaIcon } from '../../../../core/Icon'
 
 interface ActionButton {
   /**
@@ -19,35 +21,36 @@ interface ActionButton {
 
 @Component
 export struct Operations {
+  @State theme: SkinTheme.Theme = SkinTheme.getTheme();
 
   @State actionButtons: ActionButton[] = [
     {
-      iconName: 'fire',
+      iconName: 'ic_octicon_thumbsup',
       title: '推荐歌单',
       action() {
       }
 
     },
     {
-      iconName: 'trophy',
+      iconName: 'ic_trophy',
       title: '榜单',
       action() {
       }
     },
     {
-      iconName: 'clock-outline',
+      iconName: 'ic_clock',
       title: '播放记录',
       action() {
       }
     },
     {
-      iconName: 'folder-music-outline',
+      iconName: 'ic_folder_music_outline',
       title: '本地音乐',
       action() {
       }
     },
     {
-      iconName: 'folder-music-outline',
+      iconName: 'ic_aliyunpan',
       title: '阿里云盘',
       action() {
       }
@@ -58,18 +61,26 @@ export struct Operations {
     Row() {
       ForEach(this.actionButtons, (item: ActionButton, index: number) => {
         Column({ space: 4 }) {
-          Text(item.title)
-            .backgroundColor(0xFFFFFF)
-            .borderRadius(12)
-            .fontSize(14)
-            .textAlign(TextAlign.Center)
-            .width('82vp')
-            .height('65vp')
-            .margin({
-              left: index == 0 ? '0vp':'10vp'//index % 4 ? '10vp' : (index == this.actionButtons.length - 1 && this.actionButtons.length % 2 != 0) ? '10vp' : '0vp'
-            })
+          Image(mediaIcon(item.iconName))
+            .width('20vp')
+            .height('18vp')
+            .syncLoad(true)
+            .fillColor(this.theme.iconColor)
+            .onClick(e => {
 
+            })
+          Text(item.title)
+            .fontSize(14)
+            // .margin({
+            //   left: index == 0 ? '0vp':'10vp'//index % 4 ? '10vp' : (index == this.actionButtons.length - 1 && this.actionButtons.length % 2 != 0) ? '10vp' : '0vp'
+            // })
         }
+        .alignItems(HorizontalAlign.Center)
+        .justifyContent(FlexAlign.Center)
+        .backgroundColor(this.theme.gridBackgroundColor)
+        .width('82vp')
+        .height('65vp')
+        .borderRadius(12)
 
       }, (item: ActionButton, index?: number) => {
         return index + JSON.stringify(item);
