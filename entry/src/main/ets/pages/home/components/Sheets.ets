@@ -1,11 +1,13 @@
 
 import { SkinTheme } from '../../../core/Theme'
+import DictDao from '../../../db/DictDao'
 
 @Component
 export struct Sheets {
 
   @State theme: SkinTheme.Theme = SkinTheme.getTheme();
   @State currentIndex: number = 0;
+  private dictTableDao = DictDao
 
   @Builder
   tabBuilder(index: number, name: string, musicNumb: number = 0) {
@@ -67,7 +69,7 @@ export struct Sheets {
                 .fillColor(this.theme.iconColor)
                 .margin({ right: '10vp' })
                 .onClick(e => {
-                  console.log("点击搜索：");
+                  this.dictTableDao.insert('user', '张三')
                 })
 
               Image($r("app.media.ic_arrow_down_and_rectangle_on_rectangle"))
@@ -75,8 +77,9 @@ export struct Sheets {
                 .height('18vp')
                 .margin({ right: '10vp' })
                 .fillColor(this.theme.iconColor)
-                .onClick(e => {
-
+                .onClick(async  e => {
+                   let user = await this.dictTableDao.queryDictByKey('user');
+                   console.log('user', "获取用户字典：" + JSON.stringify(user))
                 })
 
             }
