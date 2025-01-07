@@ -33,6 +33,8 @@ export namespace SkinTheme {
     toastWarnTextColor: THEME;
     // toast error字体颜色
     toastErrorTextColor: THEME;
+    // 副标题字体颜色
+    subtitleTextColor: THEME;
   }
 
   class LightTheme implements Theme {
@@ -51,6 +53,7 @@ export namespace SkinTheme {
     toastSuccessTextColor = '#202020';
     toastWarnTextColor = '#E6A23C';
     toastErrorTextColor = '#F56C6C';
+    subtitleTextColor = '#606266';
   }
 
   class DarkTheme implements Theme {
@@ -69,6 +72,7 @@ export namespace SkinTheme {
     toastSuccessTextColor = '#202020';
     toastWarnTextColor = '#E6A23C';
     toastErrorTextColor = '#F56C6C';
+    subtitleTextColor = '#F56C6C';
   }
 
   // background: 'transparent',

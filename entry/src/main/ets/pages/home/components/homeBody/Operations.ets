@@ -28,6 +28,7 @@ export struct Operations {
       iconName: 'ic_octicon_thumbsup',
       title: '推荐歌单',
       action() {
+        console.log("点击推荐歌单")
       }
 
     },
@@ -35,6 +36,7 @@ export struct Operations {
       iconName: 'ic_trophy',
       title: '榜单',
       action() {
+        console.log("点击榜单")
       }
     },
     {
@@ -67,10 +69,14 @@ export struct Operations {
             .syncLoad(true)
             .fillColor(this.theme.iconColor)
             .onClick(e => {
-
+              item.action()
             })
           Text(item.title)
-            .fontSize(14)
+            .fontSize('14fp')
+            .fontColor(this.theme.fontColor)
+            .onClick(e => {
+              item.action()
+            })
             // .margin({
             //   left: index == 0 ? '0vp':'10vp'//index % 4 ? '10vp' : (index == this.actionButtons.length - 1 && this.actionButtons.length % 2 != 0) ? '10vp' : '0vp'
             // })
