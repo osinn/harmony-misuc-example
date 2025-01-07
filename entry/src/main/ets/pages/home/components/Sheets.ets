@@ -1,13 +1,19 @@
 
 import { SkinTheme } from '../../../core/Theme'
 import DictDao from '../../../db/DictDao'
+import {SheetConstants} from '../../../db/SheetEntity'
+import SheetListItem from '../../../components/base/SheetListItem'
+import CreateMusicSheetPanel from '../../../components/panels/CreateMusicSheetPanel'
 
 @Component
 export struct Sheets {
 
   @State theme: SkinTheme.Theme = SkinTheme.getTheme();
   @State currentIndex: number = 0;
+  @State isPresent: boolean = false;
   private dictTableDao = DictDao
+  // 歌单key
+  @Provide musicSheetKey: string = '';
 
   @Builder
   tabBuilder(index: number, name: string, musicNumb: number = 0) {
@@ -63,23 +69,25 @@ export struct Sheets {
           Column() {
             Row() {
 
+              // 新建歌单
               Image($r("app.media.ic_plus"))
                 .width('20vp')
                 .height('18vp')
                 .fillColor(this.theme.iconColor)
                 .margin({ right: '10vp' })
                 .onClick(e => {
-                  this.dictTableDao.insert('user', '张三')
+                  this.musicSheetKey = this.currentIndex === 0 ? SheetConstants.MY_MUSIC_SHEET_KEY : SheetConstants.COLLECT_MUSIC_SHEET_KEY
+                  this.isPresent = true
                 })
 
+              // 导入歌单
               Image($r("app.media.ic_arrow_down_and_rectangle_on_rectangle"))
                 .width('20vp')
                 .height('18vp')
                 .margin({ right: '10vp' })
                 .fillColor(this.theme.iconColor)
                 .onClick(async  e => {
-                   let user = await this.dictTableDao.queryDictByKey('user');
-                   console.log('user', "获取用户字典：" + JSON.stringify(user))
+                   console.log('user', "获取用户字典：")
                 })
 
             }
@@ -99,16 +107,20 @@ export struct Sheets {
 
         Flex({ direction: FlexDirection.Row, alignItems: ItemAlign.Center }) {
           Column() {
-            Text('歌单列表')
+            // 列表
+            SheetListItem()
           }
           .height('100%')
           .width('100%')
-          .alignItems(HorizontalAlign.Center)
-          .justifyContent(FlexAlign.Center)
+          // .alignItems(HorizontalAlign.Center)
+          // .justifyContent(FlexAlign.Center)
         }
         .height('100%')
         .width('100%')
         // .backgroundColor("#67C23A")
+        CreateMusicSheetPanel({isPresent: this.isPresent})
+          .width(0)
+          .height(0)
       }
       .width('100%')
       .height('100%')

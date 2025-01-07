@@ -10,10 +10,20 @@ class Rdb {
   //STORE_CONFIG是一个配置对象，定义了数据库的名称（my.db）和安全级别（1）。
   private STORE_CONFIG: relationalStore.StoreConfig = { name: 'RdbMusic.db', securityLevel: 1 }
   private sqlCreateTableArray: Array<string> = [
+    // 字典表
     'CREATE TABLE IF NOT EXISTS dict('
       + 'id INTEGER PRIMARY KEY AUTOINCREMENT, '
       + 'dictKey TEXT NOT NULL, '
-      + 'dictValue TEXT)'
+      + 'dictValue TEXT)',
+
+    // sheet
+    'CREATE TABLE IF NOT EXISTS sheet('
+      + 'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+      + 'sheetKey TEXT NOT NULL, '
+      + 'title TEXT NOT NULL,'
+      + 'numb INTEGER,'
+      + 'imageCover TEXT' +
+      ')'
   ]
 
   // getRdbStore是一个异步方法，用于获取或创建数据库实例

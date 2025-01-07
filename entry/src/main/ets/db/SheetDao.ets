@@ -1,34 +1,23 @@
 import { relationalStore } from '@kit.ArkData'; //用于操作关系型数据库
 import promptAction from '@ohos.promptAction'; //用于显示提示信息
 import rdb from './Rdb'
-import { DictEntity } from './DictEntity'
-import { ArrayList } from '@kit.ArkTS';
+import { SheetEntity } from './SheetEntity'
+import { ArrayList } from '@kit.ArkTS'; //用于存储和管理歌单目录列表
 
-class DictDao {
+class SheetDao {
   //DictDao 类初始化时，设置表名、列名、创建表的SQL语句，并创建 Rdb 实例来管理数据库连接。
   private tableName: string = ''
   private columns: Array<string> = []
 
   constructor() {
-    this.tableName = 'dict'
-    this.columns = ['id', 'dictKey', 'dictValue']
+    this.tableName = 'sheet'
+    this.columns = ['id', 'sheetKey', 'title', 'numb', 'imageCover']
   }
 
   // 插入数据
-  insertDict(dict: DictEntity) {
-    const valueBucket: relationalStore.ValuesBucket = JSON.parse(JSON.stringify(dict));
-    if (rdb?.rdbStore != null) {
-      rdb.rdbStore.insert(this.tableName, valueBucket, (err, ret) => {
-        console.log('insert done: ' + ret);
-        promptAction.showToast({ message: '添加成功' });
-      });
-    }
-  }
-
-  // 插入数据
-  insert(key:string, value?:string) {
-    let dictEntity = new DictEntity( key, value );
-    const valueBucket: relationalStore.ValuesBucket = JSON.parse(JSON.stringify(dictEntity));
+  insert(sheetKey:string, title: string, numb: number = 0, imageCover?: string) {
+    let sheetEntity = new SheetEntity( sheetKey, title, numb, imageCover );
+    const valueBucket: relationalStore.ValuesBucket = JSON.parse(JSON.stringify(sheetEntity));
     if (rdb?.rdbStore != null) {
       rdb.rdbStore.insert(this.tableName, valueBucket, (err, ret) => {
         promptAction.showToast({ message: '添加成功' });
@@ -36,12 +25,12 @@ class DictDao {
     }
   }
 
-  // 根据用户名查询用户信息
-  async queryDictByKey(dictKey: string) {
+  // 根据歌单目录key查询歌单目录信息
+  async querySheetByKey(sheetKey: string) {
     try {
-      let resultList: ArrayList<DictEntity> | null = null;
+      let resultList: ArrayList<SheetEntity> | null = null;
       let predicates = new relationalStore.RdbPredicates(this.tableName);
-      predicates.equalTo('dictKey', dictKey);
+      predicates.equalTo('sheetKey', sheetKey);
       let ret = await this.queryFromDB(predicates);
       if (ret != null) {
         resultList = this.getListFromResultSet(ret);
@@ -53,9 +42,9 @@ class DictDao {
     return null;
   }
 
-  // 查询全部用户信息
-  async queryDictAll() {
-    let resultList: ArrayList<DictEntity> | null = null;
+  // 查询全部歌单目录信息
+  async querySheetAll() {
+    let resultList: ArrayList<SheetEntity> | null = null;
     let predicates = new relationalStore.RdbPredicates(this.tableName);
     let ret: relationalStore.ResultSet | null = await this.queryFromDB(predicates);
 
@@ -79,14 +68,16 @@ class DictDao {
     return resultList;
   }
 
-  // 将查询到的结果封装用户列表
+  // 将查询到的结果封装歌单目录列表
   getListFromResultSet(resultSet: relationalStore.ResultSet) {
-    let DictList: ArrayList<DictEntity> = new ArrayList<DictEntity>();
+    let DictList: ArrayList<SheetEntity> = new ArrayList<SheetEntity>();
     for (let i = 0; i < resultSet.rowCount; i++) {
       resultSet.goToNextRow();
-      let Dict = new DictEntity(
-        resultSet.getString(resultSet.getColumnIndex('dictKey')),
-        resultSet.getString(resultSet.getColumnIndex('dictValue')),
+      let Dict = new SheetEntity(
+        resultSet.getString(resultSet.getColumnIndex('sheetKey')),
+        resultSet.getString(resultSet.getColumnIndex('title')),
+        resultSet.getLong(resultSet.getColumnIndex('numb')),
+        resultSet.getString(resultSet.getColumnIndex('imageCover')),
         resultSet.getLong(resultSet.getColumnIndex('id')));
       DictList.add(Dict);
     }
@@ -107,7 +98,7 @@ class DictDao {
   }
 
   // 更新数据
-  updateDict(dict: DictEntity) {
+  updateDict(dict: SheetEntity) {
     const valueBucket: relationalStore.ValuesBucket = JSON.parse(JSON.stringify(dict));
     let predicates = new relationalStore.RdbPredicates(this.tableName);
     predicates.equalTo('id', dict.id);
@@ -130,4 +121,4 @@ class DictDao {
   }
 }
 
-export default new DictDao()
+export default new SheetDao()

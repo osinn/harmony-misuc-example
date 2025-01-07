@@ -4,16 +4,35 @@ export namespace SkinTheme {
   declare type THEME = Resource | string | Color;
 
   export interface Theme {
+    // 页面背景颜色
     pageBackgroundColor: THEME;
+    // 组件背景颜色
     backgroundColor: THEME;
+    // 搜索组件背景颜色
     searchBackgroundColor: THEME;
+    // 方块格子背景颜色
     gridBackgroundColor: THEME;
+    // 背景
     background: THEME;
+    // 字体颜色
     fontColor: THEME;
+    // 确认按钮字体颜色
+    confirmButtFontColor: THEME;
+    // 取消按钮字体颜色
+    cancelButtFontColor: THEME;
+    // 天才颜色
     fillColor: THEME;
+    // 输入框 placeholder 颜色
     placeholderColor: THEME;
     dividerColor: THEME;
+    // 图标颜色
     iconColor: THEME;
+    // toast Success字体颜色
+    toastSuccessTextColor: THEME;
+    // toast warn字体颜色
+    toastWarnTextColor: THEME;
+    // toast error字体颜色
+    toastErrorTextColor: THEME;
   }
 
   class LightTheme implements Theme {
@@ -23,10 +42,15 @@ export namespace SkinTheme {
     backgroundColor = '';
     background = '';
     fontColor = '#343434';
+    confirmButtFontColor = '#E3803C';
+    cancelButtFontColor = '#202020';
     fillColor = '';
     iconColor = '#343434';
     placeholderColor = '';
     dividerColor = '#71c9ce';
+    toastSuccessTextColor = '#202020';
+    toastWarnTextColor = '#E6A23C';
+    toastErrorTextColor = '#F56C6C';
   }
 
   class DarkTheme implements Theme {
@@ -36,10 +60,15 @@ export namespace SkinTheme {
     backgroundColor = 'transparent';
     background = '#202020';
     fontColor = '#fcfcfc';
+    confirmButtFontColor = '#409EFF';
+    cancelButtFontColor = '#202020';
     fillColor = '#fcfcfc';
     iconColor = '#fcfcfc';
     placeholderColor = 'rgba(66,66,66, 0.5)';
     dividerColor = 'rgba(66,66,66, 0.5)';
+    toastSuccessTextColor = '#202020';
+    toastWarnTextColor = '#E6A23C';
+    toastErrorTextColor = '#F56C6C';
   }
 
   // background: 'transparent',
