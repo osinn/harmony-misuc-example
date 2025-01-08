@@ -3,6 +3,9 @@ import { SheetEntity } from '../../db/SheetEntity'
 import { SkinTheme } from '../../core/Theme'
 import SheetDao from '../../db/SheetDao'
 import { ArrayList } from '@kit.ArkTS'; //用于存储和管理歌单目录列表
+import { emitter } from '@kit.BasicServicesKit';
+
+import { showDialog } from '../../components/dialogs/UseDialog'
 
 
 @Component
@@ -11,17 +14,7 @@ export default struct SheetListItem {
   @Consume musicSheetKey: string;
   @State theme: SkinTheme.Theme = SkinTheme.getTheme();
 
-  @State sheetList: Array<SheetEntity> = [
-    new SheetEntity(this.musicSheetKey, '我喜欢', 0, '')
-  ]
-
-  async  aboutToAppear() {
-    let resultList: ArrayList<SheetEntity> = await SheetDao.querySheetByKey(this.musicSheetKey)
-    resultList.forEach(item => {
-      this.sheetList.push(item)
-    })
-  }
-
+  @Consume sheetList: Array<SheetEntity>;
 
   build() {
     List() {
@@ -68,6 +61,36 @@ export default struct SheetListItem {
                   .width('18vp')
                   .height('18vp')
                   .margin('10vp')
+                  .onClick(e => {
+                    showDialog();
+                    // this.getUIContext().showAlertDialog(
+                    //   {
+                    //     title: '温馨提示',
+                    //     message: `确定要删除「${item.title}」吗？`,
+                    //     buttons: [{
+                    //       value: '取消',
+                    //       action: () => {
+                    //         console.info('Callback when the first button is clicked')
+                    //       }
+                    //     },
+                    //       {
+                    //         enabled: true,
+                    //         defaultFocus: true,
+                    //         style: DialogButtonStyle.HIGHLIGHT,
+                    //         value: '确定',
+                    //         action: () => {
+                    //           console.info('Callback when the second button is clicked')
+                    //         }
+                    //       }],
+                    //   }
+                    // )
+                    // emitter.emit('musicSheetPanelDeleteItem', {
+                    //   data: {
+                    //     deleteItem: item,
+                    //     sheetKey: this.musicSheetKey,
+                    //   }
+                    // })
+                  })
               }
             }
             .width('82%')

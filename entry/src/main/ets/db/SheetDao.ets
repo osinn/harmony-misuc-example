@@ -1,9 +1,16 @@
 import { relationalStore } from '@kit.ArkData'; //用于操作关系型数据库
-import promptAction from '@ohos.promptAction'; //用于显示提示信息
+import { emitter } from '@kit.BasicServicesKit';
+import { SheetEntity, SheetConstants } from './SheetEntity'
 import rdb from './Rdb'
-import { SheetEntity } from './SheetEntity'
-import { ArrayList } from '@kit.ArkTS'; //用于存储和管理歌单目录列表
+import Toast from '../core/Toast'
 
+emitter.once('musicSheetPanelDeleteItem', async  (eventData : emitter.EventData) => {
+  if (eventData?.data?.deleteItem) {
+    await sheetDao.delete(eventData?.data?.sheetKey, eventData?.data?.deleteItem?.title);
+    Toast.success("删除成功")
+    emitter.emit('createMusicSheetPanel', {data: {updateData: true}})
+  }
+});
 class SheetDao {
   //DictDao 类初始化时，设置表名、列名、创建表的SQL语句，并创建 Rdb 实例来管理数据库连接。
   private tableName: string = ''
@@ -14,20 +21,25 @@ class SheetDao {
     this.columns = ['id', 'sheetKey', 'title', 'numb', 'imageCover', 'sort']
   }
 
+  async intiDefaultSheet() {
+    const musicSheet = await this.querySheetByKeyAndTitle(SheetConstants.MY_MUSIC_SHEET_KEY, "我喜欢")
+    if (musicSheet == null) {
+      await this.insert(SheetConstants.MY_MUSIC_SHEET_KEY, "我喜欢", 0, undefined, 99999999);
+    }
+  }
+
   // 插入数据
-  insert(sheetKey:string, title: string, numb: number = 0, imageCover?: string,  sort: number = 1) {
+  async insert(sheetKey:string, title: string, numb: number = 0, imageCover?: string,  sort: number = 1) {
     let sheetEntity = new SheetEntity( sheetKey, title, numb, imageCover, sort );
     const valueBucket: relationalStore.ValuesBucket = JSON.parse(JSON.stringify(sheetEntity));
     if (rdb?.rdbStore != null) {
-      rdb.rdbStore.insert(this.tableName, valueBucket, (err, ret) => {
-        promptAction.showToast({ message: '添加成功' });
-      });
+      await rdb.rdbStore.insert(this.tableName, valueBucket);
     }
   }
 
   // 根据歌单目录key查询歌单目录信息
   async querySheetByKey(sheetKey: string) {
-    let resultList: ArrayList<SheetEntity> = new ArrayList<SheetEntity>();
+    let resultList: Array<SheetEntity> = new Array<SheetEntity>();
     try {
       let predicates = new relationalStore.RdbPredicates(this.tableName);
       predicates.equalTo('sheetKey', sheetKey);
@@ -45,7 +57,7 @@ class SheetDao {
   // 根据歌单目录key查询歌单目录信息
   async querySheetByKeyAndTitle(sheetKey: string, title: string) {
     try {
-      let resultList: ArrayList<SheetEntity> | null = null;
+      let resultList: Array<SheetEntity> | null = null;
       let predicates = new relationalStore.RdbPredicates(this.tableName);
       predicates.equalTo('sheetKey', sheetKey).and().equalTo('title', title);
       let ret = await this.queryFromDB(predicates);
@@ -61,7 +73,7 @@ class SheetDao {
 
   // 查询全部歌单目录信息
   async querySheetAll() {
-    let resultList: ArrayList<SheetEntity> | null = null;
+    let resultList: Array<SheetEntity> | null = null;
     let predicates = new relationalStore.RdbPredicates(this.tableName);
     let ret: relationalStore.ResultSet | null = await this.queryFromDB(predicates);
 
@@ -75,9 +87,7 @@ class SheetDao {
   async queryFromDB(predicates: relationalStore.RdbPredicates) {
     let resultList: relationalStore.ResultSet | null = null;
     if (rdb?.rdbStore != null) {
-      // dbUtils.rdbStore.version = Constants.V2;
-      console.log("版本号：",rdb.rdbStore.version)
-      // predicates.orderByDesc('sort')
+      predicates.orderByDesc('sort')
       let promiseQuery = rdb.rdbStore.query(predicates);
       await promiseQuery.then((resultSet) => {
         resultList = resultSet;
@@ -89,7 +99,6 @@ class SheetDao {
   }
 
   geFromResult(resultSet: relationalStore.ResultSet): SheetEntity {
-
     try {
       const columnNameList = resultSet.columnNames;
       let jsonObject: Record<string, Object> = {};
@@ -106,11 +115,11 @@ class SheetDao {
 
   // 将查询到的结果封装歌单目录列表
   getListFromResultSet(resultSet: relationalStore.ResultSet) {
-    let sheetList: ArrayList<SheetEntity> = new ArrayList<SheetEntity>();
+    let sheetList: Array<SheetEntity> = new Array<SheetEntity>();
     for (let i = 0; i < resultSet.rowCount; i++) {
       if (resultSet.goToNextRow()) {
         let sheetEntity = this.geFromResult(resultSet);
-        sheetList.add(sheetEntity);
+        sheetList.push(sheetEntity);
       }
     }
     return sheetList;
@@ -123,7 +132,6 @@ class SheetDao {
     if (rdb?.rdbStore != null) {
       await rdb.rdbStore.delete(predicates).then((rows) => {
         result = rows;
-        promptAction.showToast({ message: '删除成功' });
       });
     }
     return result
@@ -135,22 +143,28 @@ class SheetDao {
     let predicates = new relationalStore.RdbPredicates(this.tableName);
     predicates.equalTo('id', dict.id);
     if (rdb?.rdbStore != null) {
-      rdb.rdbStore.update(valueBucket, predicates, (err, ret) => {
-        promptAction.showToast({ message: '更新成功'});
-      });
+      rdb.rdbStore.update(valueBucket, predicates);
     }
   }
 
   // 删除数据
-  deleteDictById(id: number) {
+  deleteById(id: number) {
     let predicates = new relationalStore.RdbPredicates(this.tableName);
     predicates.equalTo('id', id);
     if (rdb?.rdbStore != null) {
-      rdb.rdbStore.delete(predicates, (err, rows) => {
-        promptAction.showToast({ message: '删除成功' });
-      });
+      rdb.rdbStore.delete(predicates);
+    }
+  }
+  async  delete(sheetKey: string, title?: string) {
+    let predicates = new relationalStore.RdbPredicates(this.tableName);
+    predicates.equalTo('sheetKey', sheetKey);
+    if (title) {
+      predicates.and().equalTo('title', title)
+    }
+    if (rdb?.rdbStore != null) {
+      await rdb.rdbStore.delete(predicates);
     }
   }
 }
-
-export default new SheetDao()
+const sheetDao = new SheetDao();
+export default sheetDao

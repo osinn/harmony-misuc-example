@@ -6,7 +6,7 @@ import { BusinessError } from '@kit.BasicServicesKit';
 import { Constants } from './DBConstants'
 import DataService from './DataService'
 import { logger } from '../core/Logger';
-
+import SheetDao from './SheetDao'
 //导入relationalStore模块，这个模块提供了操作关系型数据库的API。
 
 const STORE_CONFIG: relationalStore.StoreConfig = {
@@ -89,12 +89,20 @@ class Rdb {
             // await this.batchInsert(Constants.STUDENT_TABLE, Constants.students);
             // 检查数据库升级
             await this.checkUpdateVersion();
+
+            this.intiData()
           });
 
       } catch (e) {
         console.log("初始化数据库错误" + e);
       }
+    } else {
+      this.intiData()
     }
+  }
+
+  async intiData() {
+    SheetDao.intiDefaultSheet()
   }
 
   commit(): void {

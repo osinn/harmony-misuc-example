@@ -11,7 +11,7 @@ import { HomeBody } from './components/homeBody/Index'
 import { HomeBodyHorizontal } from './components/homeBodyHorizontal/Index'
 import { display, window } from '@kit.ArkUI';
 import { SkinTheme } from '../../core/Theme'
-
+import { GlobalContext } from '../../core/GlobalContext'
 const TAG = 'foo'
 @Entry
 @Component
@@ -37,6 +37,7 @@ struct Index {
     //     this.currentDrawerType = dt;
     //   }
     // })
+    GlobalContext.getContext().setObject('UIContext', this)
 
     let d = await display.getDefaultDisplaySync()
     this.isVertical = d.rotation == 0 || d.rotation == 2;

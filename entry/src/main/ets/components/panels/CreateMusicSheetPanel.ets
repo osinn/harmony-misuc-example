@@ -5,6 +5,7 @@ import { SkinTheme } from '../../core/Theme'
 import Toast from '../../core/Toast'
 import SheetDao from '../../db/SheetDao'
 import { JSON } from '@kit.ArkTS';
+import { emitter } from '@kit.BasicServicesKit';
 
 @Component
 export default struct CreateMusicSheetPanel {
@@ -93,6 +94,7 @@ export default struct CreateMusicSheetPanel {
               if (musicSheet == null || this.musicSheetValue != musicSheet.title) {
                 await this.sheetTableDao.insert(this.musicSheetKey, this.musicSheetValue);
                 this.isPresent = false
+                emitter.emit('createMusicSheetPanel', {data: {updateData: true}})
               } else {
                 Toast.warn(`已存在${this.musicSheetValue}`);
               }
