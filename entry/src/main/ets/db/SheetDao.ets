@@ -11,12 +11,12 @@ class SheetDao {
 
   constructor() {
     this.tableName = 'sheet'
-    this.columns = ['id', 'sheetKey', 'title', 'numb', 'imageCover']
+    this.columns = ['id', 'sheetKey', 'title', 'numb', 'imageCover', 'sort']
   }
 
   // 插入数据
-  insert(sheetKey:string, title: string, numb: number = 0, imageCover?: string) {
-    let sheetEntity = new SheetEntity( sheetKey, title, numb, imageCover );
+  insert(sheetKey:string, title: string, numb: number = 0, imageCover?: string,  sort: number = 1) {
+    let sheetEntity = new SheetEntity( sheetKey, title, numb, imageCover, sort );
     const valueBucket: relationalStore.ValuesBucket = JSON.parse(JSON.stringify(sheetEntity));
     if (rdb?.rdbStore != null) {
       rdb.rdbStore.insert(this.tableName, valueBucket, (err, ret) => {
@@ -27,10 +27,27 @@ class SheetDao {
 
   // 根据歌单目录key查询歌单目录信息
   async querySheetByKey(sheetKey: string) {
+    let resultList: ArrayList<SheetEntity> = new ArrayList<SheetEntity>();
+    try {
+      let predicates = new relationalStore.RdbPredicates(this.tableName);
+      predicates.equalTo('sheetKey', sheetKey);
+      let ret = await this.queryFromDB(predicates);
+      if (ret != null) {
+        resultList = this.getListFromResultSet(ret);
+      }
+      return resultList;
+    } catch (e) {
+      console.log("查询异常", e)
+    }
+    return resultList;
+  }
+
+  // 根据歌单目录key查询歌单目录信息
+  async querySheetByKeyAndTitle(sheetKey: string, title: string) {
     try {
       let resultList: ArrayList<SheetEntity> | null = null;
       let predicates = new relationalStore.RdbPredicates(this.tableName);
-      predicates.equalTo('sheetKey', sheetKey);
+      predicates.equalTo('sheetKey', sheetKey).and().equalTo('title', title);
       let ret = await this.queryFromDB(predicates);
       if (ret != null) {
         resultList = this.getListFromResultSet(ret);
@@ -58,7 +75,10 @@ class SheetDao {
   async queryFromDB(predicates: relationalStore.RdbPredicates) {
     let resultList: relationalStore.ResultSet | null = null;
     if (rdb?.rdbStore != null) {
-      let promiseQuery = rdb.rdbStore.query(predicates, this.columns);
+      // dbUtils.rdbStore.version = Constants.V2;
+      console.log("版本号：",rdb.rdbStore.version)
+      // predicates.orderByDesc('sort')
+      let promiseQuery = rdb.rdbStore.query(predicates);
       await promiseQuery.then((resultSet) => {
         resultList = resultSet;
       }).catch((err: object) => {
@@ -68,20 +88,32 @@ class SheetDao {
     return resultList;
   }
 
+  geFromResult(resultSet: relationalStore.ResultSet): SheetEntity {
+
+    try {
+      const columnNameList = resultSet.columnNames;
+      let jsonObject: Record<string, Object> = {};
+      for (let columnNameElement of columnNameList) {
+        jsonObject[columnNameElement] = resultSet.getString(resultSet.getColumnIndex(columnNameElement));
+      }
+      let sheetEntity: SheetEntity = JSON.parse(JSON.stringify(jsonObject))
+      return sheetEntity;
+    } catch (e) {
+      console.log("获取数据异常",e);
+      throw new Error(e);
+    }
+  }
+
   // 将查询到的结果封装歌单目录列表
   getListFromResultSet(resultSet: relationalStore.ResultSet) {
-    let DictList: ArrayList<SheetEntity> = new ArrayList<SheetEntity>();
+    let sheetList: ArrayList<SheetEntity> = new ArrayList<SheetEntity>();
     for (let i = 0; i < resultSet.rowCount; i++) {
-      resultSet.goToNextRow();
-      let Dict = new SheetEntity(
-        resultSet.getString(resultSet.getColumnIndex('sheetKey')),
-        resultSet.getString(resultSet.getColumnIndex('title')),
-        resultSet.getLong(resultSet.getColumnIndex('numb')),
-        resultSet.getString(resultSet.getColumnIndex('imageCover')),
-        resultSet.getLong(resultSet.getColumnIndex('id')));
-      DictList.add(Dict);
+      if (resultSet.goToNextRow()) {
+        let sheetEntity = this.geFromResult(resultSet);
+        sheetList.add(sheetEntity);
+      }
     }
-    return DictList;
+    return sheetList;
   }
 
   // 删除全部数据

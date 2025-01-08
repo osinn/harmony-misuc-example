@@ -35,6 +35,8 @@ export namespace SkinTheme {
     toastErrorTextColor: THEME;
     // 副标题字体颜色
     subtitleTextColor: THEME;
+    // 我的歌单-我喜欢-爱心图标颜色
+    sheetHeartIconColor: THEME;
   }
 
   class LightTheme implements Theme {
@@ -54,6 +56,7 @@ export namespace SkinTheme {
     toastWarnTextColor = '#E6A23C';
     toastErrorTextColor = '#F56C6C';
     subtitleTextColor = '#606266';
+    sheetHeartIconColor = '#FF362B';
   }
 
   class DarkTheme implements Theme {
@@ -73,6 +76,7 @@ export namespace SkinTheme {
     toastWarnTextColor = '#E6A23C';
     toastErrorTextColor = '#F56C6C';
     subtitleTextColor = '#F56C6C';
+    sheetHeartIconColor = '#F56C6C';
   }
 
   // background: 'transparent',

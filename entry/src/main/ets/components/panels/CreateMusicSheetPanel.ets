@@ -75,7 +75,7 @@ export default struct CreateMusicSheetPanel {
           .fontColor(this.theme.cancelButtFontColor)
           .onClick(async () => {
             const musicSheetList = await this.sheetTableDao.querySheetAll();
-            console.log("歌单" + JSON.stringify(musicSheetList))
+            console.log("歌单===>" + JSON.stringify(musicSheetList))
             this.isPresent = false
           })
 
@@ -89,10 +89,8 @@ export default struct CreateMusicSheetPanel {
           .fontColor(this.theme.confirmButtFontColor)
           .onClick(async () => {
             if (this.musicSheetKey) {
-
-              const musicSheet = await this.sheetTableDao.querySheetByKey(this.musicSheetKey)
+              const musicSheet = await this.sheetTableDao.querySheetByKeyAndTitle(this.musicSheetKey, this.musicSheetValue)
               if (musicSheet == null || this.musicSheetValue != musicSheet.title) {
-                console.log("添加歌单" +  this.musicSheetValue + " ==== " +musicSheet?.title)
                 await this.sheetTableDao.insert(this.musicSheetKey, this.musicSheetValue);
                 this.isPresent = false
               } else {
@@ -100,7 +98,6 @@ export default struct CreateMusicSheetPanel {
               }
             } else {
               Toast.warn("请选择创建歌单类型");
-              // promptAction.showToast({message: "请选择创建歌单类型"})
             }
           })
       }

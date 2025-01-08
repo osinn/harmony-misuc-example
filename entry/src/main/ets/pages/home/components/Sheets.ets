@@ -13,7 +13,7 @@ export struct Sheets {
   @State isPresent: boolean = false;
   private dictTableDao = DictDao
   // 歌单key
-  @Provide musicSheetKey: string = '';
+  @Provide musicSheetKey: string = SheetConstants.MY_MUSIC_SHEET_KEY;
 
   @Builder
   tabBuilder(index: number, name: string, musicNumb: number = 0) {
@@ -75,8 +75,10 @@ export struct Sheets {
                 .height('18vp')
                 .fillColor(this.theme.iconColor)
                 .margin({ right: '10vp' })
-                .onClick(e => {
+                .onClick(async () => {
                   this.musicSheetKey = this.currentIndex === 0 ? SheetConstants.MY_MUSIC_SHEET_KEY : SheetConstants.COLLECT_MUSIC_SHEET_KEY
+                  const d = await this.dictTableDao.queryDictByKey(this.musicSheetKey);
+                  console.log("字典",JSON.stringify(d))
                   this.isPresent = true
                 })
 

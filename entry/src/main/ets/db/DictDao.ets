@@ -80,17 +80,26 @@ class DictDao {
   }
 
   // 将查询到的结果封装用户列表
-  getListFromResultSet(resultSet: relationalStore.ResultSet) {
-    let DictList: ArrayList<DictEntity> = new ArrayList<DictEntity>();
-    for (let i = 0; i < resultSet.rowCount; i++) {
-      resultSet.goToNextRow();
-      let Dict = new DictEntity(
-        resultSet.getString(resultSet.getColumnIndex('dictKey')),
-        resultSet.getString(resultSet.getColumnIndex('dictValue')),
-        resultSet.getLong(resultSet.getColumnIndex('id')));
-      DictList.add(Dict);
+  geFromResult(resultSet: relationalStore.ResultSet): DictEntity {
+    const columnNameList = resultSet.columnNames;
+    let jsonObject: Record<string, Object> = {};
+    for (let columnNameElement of columnNameList) {
+      jsonObject[columnNameElement] = resultSet.getString(resultSet.getColumnIndex(columnNameElement));
     }
-    return DictList;
+    let dict: DictEntity = JSON.parse(JSON.stringify(jsonObject))
+    return dict;
+  }
+
+  // 将查询到的结果封装用户列表
+  getListFromResultSet(resultSet: relationalStore.ResultSet) {
+    let dictList: ArrayList<DictEntity> = new ArrayList<DictEntity>();
+    for (let i = 0; i < resultSet.rowCount; i++) {
+      if (resultSet.goToNextRow()) {
+        let dict = this.geFromResult(resultSet);
+        dictList.add(dict);
+      };
+    }
+    return dictList;
   }
 
   // 删除全部数据

@@ -1,20 +1,31 @@
 import { util } from '@kit.ArkTS'
 import { SheetEntity } from '../../db/SheetEntity'
 import { SkinTheme } from '../../core/Theme'
+import SheetDao from '../../db/SheetDao'
+import { ArrayList } from '@kit.ArkTS'; //用于存储和管理歌单目录列表
+
 
 @Component
 export default struct SheetListItem {
   // 歌单key
   @Consume musicSheetKey: string;
   @State theme: SkinTheme.Theme = SkinTheme.getTheme();
-  private contacts: Array<SheetEntity> = [
-    new SheetEntity(this.musicSheetKey, '我喜欢', 0, ''),
-    new SheetEntity(this.musicSheetKey, '我的音乐', 0, ''),
+
+  @State sheetList: Array<SheetEntity> = [
+    new SheetEntity(this.musicSheetKey, '我喜欢', 0, '')
   ]
+
+  async  aboutToAppear() {
+    let resultList: ArrayList<SheetEntity> = await SheetDao.querySheetByKey(this.musicSheetKey)
+    resultList.forEach(item => {
+      this.sheetList.push(item)
+    })
+  }
+
 
   build() {
     List() {
-      ForEach(this.contacts, (item: SheetEntity, index: number) => {
+      ForEach(this.sheetList, (item: SheetEntity, index: number) => {
         ListItem() {
           Row() {
             if (index == 0) {
@@ -23,6 +34,15 @@ export default struct SheetListItem {
                 .height('40vp')
                 .margin('10vp')
                 .borderRadius(8)
+
+              Image($r("app.media.ic_heart"))
+                .width('20vp')
+                .height('20vp')
+                .margin('10vp')
+                .borderRadius(8)
+                .fillColor('red')
+                .position({top: '10vp', left: '10vp'})
+
             } else {
               Image($r("app.media.album_default"))
                 .width('40vp')
@@ -54,6 +74,7 @@ export default struct SheetListItem {
 
 
           }
+          .position({bottom: 0, right: 0})
           .width('100%')
           .justifyContent(FlexAlign.Start)
         }

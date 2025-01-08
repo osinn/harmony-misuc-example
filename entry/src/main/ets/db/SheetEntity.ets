@@ -4,17 +4,19 @@ export class SheetEntity {
   title: string;
   numb?: number;
   imageCover?: string;
+  sort?: number;
 
-  constructor(sheetKey:string, title: string, numb?: number, imageCover?: string, id?: number) {
+  constructor(sheetKey:string, title: string, numb?: number, imageCover?: string, sort?: number, id?: number) {
     this.id = id
     this.sheetKey = sheetKey;
     this.title = title;
     this.numb = numb;
     this.imageCover = imageCover;
+    this.sort = sort;
   }
 
   toString() {
-    return this.id + ' ' + this.sheetKey + ' ' + this.title + ' ' + this.numb + ' ' + this.imageCover+ '\n';
+    return this.id + ' ' + this.sheetKey + ' ' + this.title + ' ' + this.numb + ' ' + this.imageCover + ' ' + this.sort + '\n';
   }
 }
 
