@@ -24,6 +24,9 @@ export namespace SkinTheme {
     fillColor: THEME;
     // 输入框 placeholder 颜色
     placeholderColor: THEME;
+    // tab 选中底部线条颜色
+    tabDividerColor: THEME;
+    // 线条颜色
     dividerColor: THEME;
     // 图标颜色
     iconColor: THEME;
@@ -51,7 +54,8 @@ export namespace SkinTheme {
     fillColor = '';
     iconColor = '#343434';
     placeholderColor = '';
-    dividerColor = '#71c9ce';
+    tabDividerColor = '#71c9ce';
+    dividerColor = '#C0C4CC';
     toastSuccessTextColor = '#202020';
     toastWarnTextColor = '#E6A23C';
     toastErrorTextColor = '#F56C6C';
@@ -71,6 +75,7 @@ export namespace SkinTheme {
     fillColor = '#fcfcfc';
     iconColor = '#fcfcfc';
     placeholderColor = 'rgba(66,66,66, 0.5)';
+    tabDividerColor = 'rgba(66,66,66, 0.5)';
     dividerColor = 'rgba(66,66,66, 0.5)';
     toastSuccessTextColor = '#202020';
     toastWarnTextColor = '#E6A23C';

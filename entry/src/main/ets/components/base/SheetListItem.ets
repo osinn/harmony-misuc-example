@@ -3,9 +3,9 @@ import { SheetEntity } from '../../db/SheetEntity'
 import { SkinTheme } from '../../core/Theme'
 import SheetDao from '../../db/SheetDao'
 import { ArrayList } from '@kit.ArkTS'; //用于存储和管理歌单目录列表
-import { emitter } from '@kit.BasicServicesKit';
 
-import { showDialog } from '../../components/dialogs/UseDialog'
+import { ShowDialog, DialogConstants } from '../../components/dialogs/UseDialog'
+import { emitter } from '@kit.BasicServicesKit';
 
 
 @Component
@@ -15,6 +15,8 @@ export default struct SheetListItem {
   @State theme: SkinTheme.Theme = SkinTheme.getTheme();
 
   @Consume sheetList: Array<SheetEntity>;
+
+  private showDialog = new ShowDialog()
 
   build() {
     List() {
@@ -62,7 +64,13 @@ export default struct SheetListItem {
                   .height('18vp')
                   .margin('10vp')
                   .onClick(e => {
-                    showDialog();
+                    this.showDialog.openDialog(`确定要删除「${item.title}」吗？`, "温馨提示", false, async  () => {
+                        console.log("确认删除")
+                      await SheetDao.delete(item.sheetKey, item.title)
+
+                      emitter.emit(DialogConstants.SHOW_DIALOG_CONFIRM_EVENT_ID)
+                      this.showDialog.currentShowDialog()
+                    });
                     // this.getUIContext().showAlertDialog(
                     //   {
                     //     title: '温馨提示',

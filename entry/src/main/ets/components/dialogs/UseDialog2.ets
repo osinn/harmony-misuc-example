@@ -3,18 +3,12 @@ import { GlobalContext } from '../../core/GlobalContext'
 import { emitter } from '@kit.BasicServicesKit'
 
 export class DialogConstants {
-  /**
-   * ShowDialog 确认关闭
-   */
   static readonly SHOW_DIALOG_CONFIRM_EVENT_ID: string = 'showDialogOfConfirm';
-  /**
-   * ShowDialog 取消
-   */
   static readonly SHOW_DIALOG_CANCEL_EVENT_ID: string = 'showDialogOfCancel';
 }
 
 @Builder
-function customDialogBuilder(message: string, title: String, clickClose: boolean, confirm?: Function) {
+export function customDialogBuilder(message: string, title: String, clickClose: boolean, confirm?: Function) {
   Column() {
     Row() {
 
@@ -25,13 +19,12 @@ function customDialogBuilder(message: string, title: String, clickClose: boolean
     .width('100%')
     .justifyContent(FlexAlign.Start)
     .height("50vp")
-
     Divider()
     Text(message)
       .fontSize('16fp')
       .height("20vp")
-      .margin({ top: '10vp' })
-    Row({ space: '30vp' }) {
+      .margin({top: '10vp'})
+    Row({space: '30vp'}) {
       Button("取消").onClick(() => {
         emitter.emit(DialogConstants.SHOW_DIALOG_CANCEL_EVENT_ID)
         promptAction.closeCustomDialog(getCustomDialogId())
@@ -43,9 +36,8 @@ function customDialogBuilder(message: string, title: String, clickClose: boolean
       Button("确认").onClick(() => {
         if (confirm) {
           confirm()
-        } else {
-          emitter.emit(DialogConstants.SHOW_DIALOG_CONFIRM_EVENT_ID)
         }
+        emitter.emit(DialogConstants.SHOW_DIALOG_CONFIRM_EVENT_ID)
         if (clickClose) {
           promptAction.closeCustomDialog(getCustomDialogId())
         }
@@ -64,33 +56,15 @@ function getCustomDialogId() {
   return customDialogId;
 }
 
-
-export class ShowDialog {
-  constructor() {
-
-  }
-
-  /**
-   * 打开对话弹窗
-   * @param message     消息内容
-   * @param title       标题
-   * @param clickClose  点击确认按钮是否自动关闭，默认是自动关闭
-   * @param confirm     点击确认按钮回调方法，有回调方法则不会发送点击确认按钮通知事件
-   */
-  openDialog(message: string, title: string = '温馨提示', clickClose: boolean = true, confirm?: Function) {
-    const that = GlobalContext.getContext().getObject('UIContext') as UIContext;
-    if (that) {
-      promptAction.openCustomDialog({
-        builder: customDialogBuilder.bind(that, message, title, clickClose, confirm),
-        backgroundColor: '#FFFFFF'
-      })
-        .then((dialogId: number) => {
-          GlobalContext.getContext().setObject('customDialogId', dialogId)
-        })
-    }
-  }
-
-  currentShowDialog() {
-    promptAction.closeCustomDialog(getCustomDialogId())
+export function showDialog(message: string, title: string = '温馨提示', clickClose: boolean = true, confirm?: Function) {
+  const that = GlobalContext.getContext().getObject('UIContext') as UIContext;
+  if (that) {
+    promptAction.openCustomDialog({
+      builder: customDialogBuilder.bind(that, message, title, clickClose, confirm),
+      backgroundColor: '#FFFFFF'
+    })
+      .then((dialogId: number) => {
+      GlobalContext.getContext().setObject('customDialogId', dialogId)
+    })
   }
 }

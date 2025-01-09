@@ -4,7 +4,7 @@ import { SheetEntity, SheetConstants } from './SheetEntity'
 import rdb from './Rdb'
 import Toast from '../core/Toast'
 
-emitter.once('musicSheetPanelDeleteItem', async  (eventData : emitter.EventData) => {
+emitter.on('musicSheetPanelDeleteItem', async  (eventData : emitter.EventData) => {
   if (eventData?.data?.deleteItem) {
     await sheetDao.delete(eventData?.data?.sheetKey, eventData?.data?.deleteItem?.title);
     Toast.success("删除成功")

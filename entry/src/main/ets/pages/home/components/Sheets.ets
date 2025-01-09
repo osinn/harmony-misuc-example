@@ -5,6 +5,7 @@ import { SheetEntity, SheetConstants } from '../../../db/SheetEntity'
 import SheetListItem from '../../../components/base/SheetListItem'
 import CreateMusicSheetPanel from '../../../components/panels/CreateMusicSheetPanel'
 import SheetDao from '../../../db/SheetDao'
+import { DialogConstants } from '../../../components/dialogs/UseDialog';
 
 @Component
 export struct Sheets {
@@ -17,13 +18,17 @@ export struct Sheets {
   @Provide sheetList: Array<SheetEntity> = new Array<SheetEntity>();
 
   aboutToAppear() {
+    // console.log("组件初始化")
     this.querySheet();
-    emitter.once('createMusicSheetPanel', (eventData : emitter.EventData) => {
+    emitter.on('createMusicSheetPanel', (eventData : emitter.EventData) => {
       if (eventData?.data?.updateData) {
         console.log("更新监听事件", JSON.stringify(eventData?.data))
         this.querySheet()
       }
     });
+    emitter.on(DialogConstants.SHOW_DIALOG_CONFIRM_EVENT_ID, () => {
+      this.querySheet()
+    })
   }
 
   private changeTabBuilder () {
@@ -32,7 +37,7 @@ export struct Sheets {
   }
 
   private async querySheet() {
-    console.log("进来");
+    // console.log("进来");
     let resultList: Array<SheetEntity> = await SheetDao.querySheetByKey(this.musicSheetKey)
     this.sheetList = [];
     resultList.forEach(item => {
@@ -53,7 +58,7 @@ export struct Sheets {
         Divider()
           .width('100%')
           .strokeWidth(2)
-          .color(this.theme.dividerColor)
+          .color(this.theme.tabDividerColor)
           .opacity(this.currentIndex === index ? 1 : 0)
       }
       .width('70vp')
