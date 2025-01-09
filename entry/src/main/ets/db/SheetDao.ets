@@ -138,12 +138,67 @@ class SheetDao {
   }
 
   // 更新数据
-  updateDict(dict: SheetEntity) {
-    const valueBucket: relationalStore.ValuesBucket = JSON.parse(JSON.stringify(dict));
+  updateSheet(sheet: SheetEntity) {
+    const valueBucket: relationalStore.ValuesBucket = JSON.parse(JSON.stringify(sheet));
     let predicates = new relationalStore.RdbPredicates(this.tableName);
-    predicates.equalTo('id', dict.id);
+    predicates.equalTo('id', sheet.id);
     if (rdb?.rdbStore != null) {
       rdb.rdbStore.update(valueBucket, predicates);
+    }
+  }
+
+  // 批量更新排序
+  async  executeBatchUpdateSort(sheetList: SheetEntity[]) {
+    if (!sheetList  || sheetList.length == 0) {
+      return;
+    }
+    const sql2 = `UPDATE sheet
+                SET sort =
+                CASE
+                    id `;
+
+    let sql = sql2;
+    let ids: number[] = [];
+
+    for (let i = 0; i < sheetList.length; i++) {
+      let sheetListElement = sheetList[i];
+      if (sheetListElement?.id) {
+        sql += ` WHEN ${sheetListElement.id} THEN ${sheetListElement.sort} `;
+        ids.push(sheetListElement?.id);
+      }
+    }
+
+    sql += `	END
+          WHERE
+            id IN (${ids.join(",")})`
+
+    if (rdb?.rdbStore != null) {
+      await rdb.rdbStore.executeSql(sql);
+      await rdb.commit();
+    }
+  }
+
+  // 分配批量更新排序
+  async  batchUpdateSort(sheetList: Array<SheetEntity>) {
+    if (!sheetList  || sheetList.length == 0) {
+      return;
+    }
+
+    let batchSize = 300;
+    let updateIds: SheetEntity[] = [];
+
+    // 分批处理
+    for (let i = 0; i < sheetList.length; i++) {
+      updateIds.push(sheetList[i]); // 添加到当前批次
+      if ((i + 1) % batchSize == 0) { // 每满一个批次
+        this.executeBatchUpdateSort(updateIds);
+        updateIds = new Array<SheetEntity>();
+      }
+    }
+
+    // 处理最后剩余的元素（不足一个批次）
+    if (updateIds.length > 0) {
+      await this.executeBatchUpdateSort(updateIds);
     }
   }
 

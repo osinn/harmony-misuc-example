@@ -1,3 +1,4 @@
+@Observed
 export class SheetEntity {
   id?: number
   sheetKey: string;

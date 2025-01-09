@@ -3,10 +3,11 @@ import { SkinTheme } from '../../../core/Theme'
 import DictDao from '../../../db/DictDao'
 import { SheetEntity, SheetConstants } from '../../../db/SheetEntity'
 import SheetListItem from '../../../components/base/SheetListItem'
+import {SheetMoveListItem, SheetMoveListItemController} from '../../../components/base/SheetMoveListItem'
 import CreateMusicSheetPanel from '../../../components/panels/CreateMusicSheetPanel'
 import SheetDao from '../../../db/SheetDao'
 import { DialogConstants } from '../../../components/dialogs/UseDialog';
-
+import { ListExchangeViewComponent } from "../../../components/base/listexchange/view/ListExchangeView";
 @Component
 export struct Sheets {
   @State theme: SkinTheme.Theme = SkinTheme.getTheme();
@@ -16,13 +17,19 @@ export struct Sheets {
   // 歌单key
   @Provide musicSheetKey: string = SheetConstants.MY_MUSIC_SHEET_KEY;
   @Provide sheetList: Array<SheetEntity> = new Array<SheetEntity>();
+  // 是否刷新拖拽列表数据
+  @Provide refreshListExchangeViewComponent: boolean = false
+
+  @State myMusicSheetNumb: number = 0;
+  @State collectMusicSheetNumb: number = 0;
+
+  private sheetMoveListItemChildRef = new SheetMoveListItemController()
 
   aboutToAppear() {
     // console.log("组件初始化")
     this.querySheet();
     emitter.on('createMusicSheetPanel', (eventData : emitter.EventData) => {
       if (eventData?.data?.updateData) {
-        console.log("更新监听事件", JSON.stringify(eventData?.data))
         this.querySheet()
       }
     });
@@ -39,10 +46,21 @@ export struct Sheets {
   private async querySheet() {
     // console.log("进来");
     let resultList: Array<SheetEntity> = await SheetDao.querySheetByKey(this.musicSheetKey)
-    this.sheetList = [];
-    resultList.forEach(item => {
-      this.sheetList.push(item)
-    })
+    if (resultList && resultList.length > 0) {
+      this.sheetList = JSON.parse(JSON.stringify(resultList))
+
+      this.myMusicSheetNumb = this.currentIndex == 0 ? resultList.length : 0
+      this.collectMusicSheetNumb = this.currentIndex == 1 ? resultList.length : 0
+    } else {
+      this.sheetList = [];
+      this.myMusicSheetNumb = 0
+      this.collectMusicSheetNumb = 0
+    }
+    // this.sheetList = [];
+    // resultList.forEach(item => {
+    //   this.sheetList.push(item)
+    // })
+    this.refreshListExchangeViewComponent = true;
   }
 
   @Builder
@@ -81,9 +99,10 @@ export struct Sheets {
         Flex({ direction: FlexDirection.Row, alignItems: ItemAlign.Center }) {
           Column() {
             Row() {
-              this.tabBuilder(0, '我的歌单', 10)
+              // UI没有刷新数量？
+              this.tabBuilder(0, '我的歌单', this.myMusicSheetNumb)
 
-              this.tabBuilder(1, '收藏歌单')
+              this.tabBuilder(1, '收藏歌单', this.collectMusicSheetNumb)
             }
             .margin({ top: 5 })
 
@@ -119,7 +138,8 @@ export struct Sheets {
                 .margin({ right: '10vp' })
                 .fillColor(this.theme.iconColor)
                 .onClick(async e => {
-                  console.log('user', "获取用户字典：")
+                  const testData = await this.sheetMoveListItemChildRef.getSheetMoveListItemData();
+                  console.log('user', "获取用户字典：" + JSON.stringify(testData))
                 })
 
             }
@@ -140,7 +160,9 @@ export struct Sheets {
         Flex({ direction: FlexDirection.Row, alignItems: ItemAlign.Center }) {
           Column() {
             // 列表
-            SheetListItem()
+            // SheetListItem()
+            SheetMoveListItem({sheetList: this.sheetList, controller: this.sheetMoveListItemChildRef})
+            // ListExchangeViewComponent({sheetList: this.sheetList})
           }
           .height('100%')
           .width('100%')
