@@ -1,10 +1,4 @@
 
-import { ValuesBucket } from '@kit.ArkData';
-
-
-[
-  'dict'
-]
 export class Constants {
   static readonly SQL_TABLE_NAME: Array<string> = [
     // 字典表

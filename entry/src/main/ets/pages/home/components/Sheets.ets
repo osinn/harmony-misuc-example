@@ -3,11 +3,17 @@ import { SkinTheme } from '../../../core/Theme'
 import DictDao from '../../../db/DictDao'
 import { SheetEntity, SheetConstants } from '../../../db/SheetEntity'
 import SheetListItem from '../../../components/base/SheetListItem'
-import {SheetMoveListItem, SheetMoveListItemController} from '../../../components/base/SheetMoveListItem'
+import { SheetMoveListItem, SheetMoveListItemController } from '../../../components/base/SheetMoveListItem'
 import CreateMusicSheetPanel from '../../../components/panels/CreateMusicSheetPanel'
 import SheetDao from '../../../db/SheetDao'
 import { DialogConstants } from '../../../components/dialogs/UseDialog';
-import { ListExchangeViewComponent } from "../../../components/base/listexchange/view/ListExchangeView";
+
+class TabBuilderParam {
+  index: number = 0;
+  name: string = '';
+  musicNumb: number = 0
+}
+
 @Component
 export struct Sheets {
   @State theme: SkinTheme.Theme = SkinTheme.getTheme();
@@ -19,16 +25,14 @@ export struct Sheets {
   @Provide sheetList: Array<SheetEntity> = new Array<SheetEntity>();
   // 是否刷新拖拽列表数据
   @Provide refreshListExchangeViewComponent: boolean = false
-
-  @State myMusicSheetNumb: number = 0;
-  @State collectMusicSheetNumb: number = 0;
-
+  @State myMusicSheetList: Array<SheetEntity> = new Array<SheetEntity>();
+  @State collectMusicSheetList: Array<SheetEntity> = new Array<SheetEntity>();
   private sheetMoveListItemChildRef = new SheetMoveListItemController()
 
   aboutToAppear() {
     // console.log("组件初始化")
     this.querySheet();
-    emitter.on('createMusicSheetPanel', (eventData : emitter.EventData) => {
+    emitter.on('createMusicSheetPanel', (eventData: emitter.EventData) => {
       if (eventData?.data?.updateData) {
         this.querySheet()
       }
@@ -38,23 +42,27 @@ export struct Sheets {
     })
   }
 
-  private changeTabBuilder () {
+  private async changeTabBuilder() {
     this.musicSheetKey = this.currentIndex === 0 ? SheetConstants.MY_MUSIC_SHEET_KEY : SheetConstants.COLLECT_MUSIC_SHEET_KEY;
-    this.querySheet();
+    await this.querySheet();
   }
 
   private async querySheet() {
-    // console.log("进来");
     let resultList: Array<SheetEntity> = await SheetDao.querySheetByKey(this.musicSheetKey)
     if (resultList && resultList.length > 0) {
-      this.sheetList = JSON.parse(JSON.stringify(resultList))
-
-      this.myMusicSheetNumb = this.currentIndex == 0 ? resultList.length : 0
-      this.collectMusicSheetNumb = this.currentIndex == 1 ? resultList.length : 0
+      this.sheetList = resultList;
+      switch (this.currentIndex) {
+        case 0:
+          this.myMusicSheetList = resultList;
+          break;
+        case 1:
+          this.collectMusicSheetList = resultList;
+          break;
+      }
     } else {
       this.sheetList = [];
-      this.myMusicSheetNumb = 0
-      this.collectMusicSheetNumb = 0
+      this.myMusicSheetList = [];
+      this.myMusicSheetList = [];
     }
     // this.sheetList = [];
     // resultList.forEach(item => {
@@ -64,26 +72,26 @@ export struct Sheets {
   }
 
   @Builder
-  tabBuilder(index: number, name: string, musicNumb: number = 0) {
+  tabBuilder(param: TabBuilderParam) {
     Row() {
       Column() {
-        Text(name)
+        Text(param.name)
           .fontColor(this.theme.fontColor)
           .margin({ bottom: 5 })
           .onClick(() => {
-            this.currentIndex = index;
+            this.currentIndex = param.index;
           })
         Divider()
           .width('100%')
           .strokeWidth(2)
           .color(this.theme.tabDividerColor)
-          .opacity(this.currentIndex === index ? 1 : 0)
+          .opacity(this.currentIndex === param.index ? 1 : 0)
       }
       .width('70vp')
       .height('30vp')
 
       Column() {
-        Text(`(${musicNumb})`)// .lineHeight(7)
+        Text(`(${param.musicNumb})`)// .lineHeight(7)
           .fontSize(12)
           .fontColor(this.theme.fontColor)
       }
@@ -93,16 +101,20 @@ export struct Sheets {
 
   }
 
+  // @Builder 模块需要引用传递UI才会刷新
+  @BuilderParam
+  customTabBuilderParam: ($$: TabBuilderParam) => void = this.tabBuilder;
+
   build() {
     Row() {
       Column() {
         Flex({ direction: FlexDirection.Row, alignItems: ItemAlign.Center }) {
           Column() {
             Row() {
-              // UI没有刷新数量？
-              this.tabBuilder(0, '我的歌单', this.myMusicSheetNumb)
 
-              this.tabBuilder(1, '收藏歌单', this.collectMusicSheetNumb)
+              this.customTabBuilderParam({ index: 0, name: '我的歌单', musicNumb: this.myMusicSheetList.length })
+
+              // this.customTabBuilderParam({ index: 1, name: '收藏歌单', musicNumb: this.collectMusicSheetList.length })
             }
             .margin({ top: 5 })
 
@@ -125,7 +137,8 @@ export struct Sheets {
                 .fillColor(this.theme.iconColor)
                 .margin({ right: '10vp' })
                 .onClick(async () => {
-                  this.musicSheetKey = this.currentIndex === 0 ? SheetConstants.MY_MUSIC_SHEET_KEY : SheetConstants.COLLECT_MUSIC_SHEET_KEY
+                  this.musicSheetKey =
+                    this.currentIndex === 0 ? SheetConstants.MY_MUSIC_SHEET_KEY : SheetConstants.COLLECT_MUSIC_SHEET_KEY
                   const d = await this.dictTableDao.queryDictByKey(this.musicSheetKey);
                   console.log("字典", JSON.stringify(d))
                   this.isPresent = true
@@ -138,8 +151,9 @@ export struct Sheets {
                 .margin({ right: '10vp' })
                 .fillColor(this.theme.iconColor)
                 .onClick(async e => {
-                  const testData = await this.sheetMoveListItemChildRef.getSheetMoveListItemData();
-                  console.log('user', "获取用户字典：" + JSON.stringify(testData))
+                  console.log("1111===>");
+                  let a = Function
+                  console.log("===>",a);
                 })
 
             }
@@ -161,7 +175,7 @@ export struct Sheets {
           Column() {
             // 列表
             // SheetListItem()
-            SheetMoveListItem({sheetList: this.sheetList, controller: this.sheetMoveListItemChildRef})
+            SheetMoveListItem({ sheetList: this.sheetList, controller: this.sheetMoveListItemChildRef })
             // ListExchangeViewComponent({sheetList: this.sheetList})
           }
           .height('100%')
