@@ -12,6 +12,7 @@ import { HomeBodyHorizontal } from './components/homeBodyHorizontal/Index'
 import { display, window } from '@kit.ArkUI';
 import { SkinTheme } from '../../core/Theme'
 import { GlobalContext } from '../../core/GlobalContext'
+import {DrawerList} from './components/drawer/DrawerList'
 const TAG = 'foo'
 @Entry
 @Component
@@ -42,12 +43,12 @@ struct Index {
     let d = await display.getDefaultDisplaySync()
     this.isVertical = d.rotation == 0 || d.rotation == 2;
 
-    this.setOrientation()
+    // this.setOrientation()
 
     let callback = async () => {
       let d = await display.getDefaultDisplaySync()
       this.isVertical = d.rotation == 0 || d.rotation == 2;
-      console.log("屏幕方向", this.isVertical)
+      console.log("屏幕方向", this.isVertical, getContext().resourceManager.getConfigurationSync().direction)
     }
     try {
       display.on("change", callback); // 监听屏幕状态改变
@@ -56,50 +57,51 @@ struct Index {
     }
   }
 
-  setOrientation() {
-    try {
-      window.getLastWindow(getContext(this), (err, data) => { // 获取window实例
-        if (err.code) {
-          console.error(TAG, 'Failed to obtain the top window. Cause: ' + JSON.stringify(err));
-          return;
-        }
-        let windowClass = data;
-        console.info(TAG, 'Succeeded in obtaining the top window. Data: ' + JSON.stringify(data));
-
-        let orientation = window.Orientation.AUTO_ROTATION; // 设置窗口方向为传感器自动旋转模式。
-        try {
-          windowClass.setPreferredOrientation(orientation, (err) => {
-            if (err.code) {
-              console.error(TAG, 'Failed to set window orientation. Cause: ' + JSON.stringify(err));
-              return;
-            }
-            console.info(TAG, 'Succeeded in setting window orientation.');
-          });
-        } catch (exception) {
-          console.error(TAG, 'Failed to set window orientation. Cause: ' + JSON.stringify(exception));
-        }
-        ;
-      });
-    } catch (exception) {
-      console.error(TAG, 'Failed to obtain the top window. Cause: ' + JSON.stringify(exception));
-    }
-    ;
-  }
+  // 通过代码调用api设置横竖屏切换
+  // setOrientation() {
+  //   try {
+  //     window.getLastWindow(getContext(this), (err, data) => { // 获取window实例
+  //       if (err.code) {
+  //         console.error(TAG, 'Failed to obtain the top window. Cause: ' + JSON.stringify(err));
+  //         return;
+  //       }
+  //       let windowClass = data;
+  //       console.info(TAG, 'Succeeded in obtaining the top window. Data: ' + JSON.stringify(data));
+  //
+  //       let orientation = window.Orientation.AUTO_ROTATION_RESTRICTED; // 设置窗口方向为传感器自动旋转模式。
+  //       try {
+  //         windowClass.setPreferredOrientation(orientation, (err) => {
+  //           if (err.code) {
+  //             console.error(TAG, 'Failed to set window orientation. Cause: ' + JSON.stringify(err));
+  //             return;
+  //           }
+  //           console.info(TAG, 'Succeeded in setting window orientation.');
+  //         });
+  //       } catch (exception) {
+  //         console.error(TAG, 'Failed to set window orientation. Cause: ' + JSON.stringify(exception));
+  //       }
+  //       ;
+  //     });
+  //   } catch (exception) {
+  //     console.error(TAG, 'Failed to obtain the top window. Cause: ' + JSON.stringify(exception));
+  //   }
+  //   ;
+  // }
 
   build() {
     Row() {
       Column() {
         SideBarContainer(SideBarContainerType.Overlay){
           Column(){
-            Text('侧边栏内容')
-            Button('关闭')
-              .onClick(()=>{
-                animateTo({duration: 550},()=>{this.isShowSideBar = false}) //动画关闭侧边栏
-              })
+            DrawerList()
+            // Text('侧边栏内容')
+            // Button('关闭')
+            //   .onClick(()=>{
+            //     animateTo({duration: 550},()=>{this.isShowSideBar = false}) //动画关闭侧边栏
+            //   })
           }
           .height('100%')
-          .width('60%')
-          .backgroundColor(Color.Pink)
+
           Column(){
             // 顶部搜索
             NavBar({ openDrawer: () => {
@@ -121,8 +123,8 @@ struct Index {
         }
         .showSideBar($$this.isShowSideBar) //不显示侧边栏
         .showControlButton(false) //不显示控制按钮
-        .sideBarWidth('80%')  //侧边栏宽度
-        .maxSideBarWidth('100%')//最大宽度
+        .sideBarWidth('240vp')  //侧边栏宽度
+        // .maxSideBarWidth('100%')//最大宽度
       }
     }
     .height('100%')

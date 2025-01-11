@@ -22,6 +22,8 @@
         "startWindowIcon": "$media:startIcon",
         "startWindowBackground": "$color:start_window_background",
         "exported": true,
+        // 传感器开关打开，方向可随传感器旋转
+        "orientation":"auto_rotation_restricted",
         "skills": [
           {
             "entities": [

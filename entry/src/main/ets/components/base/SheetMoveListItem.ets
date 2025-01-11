@@ -208,6 +208,7 @@ export struct SheetMoveListItem {
                 .margin('10vp')
                 .borderRadius(8)
                 .fillColor('red')
+                // 可以考虑使用堆叠组件替换
                 .position({ top: '10vp', left: '10vp' })
 
             } else {
@@ -246,7 +247,7 @@ export struct SheetMoveListItem {
                   })
               }
             }
-            .width('82%')
+            .margin({right: '65vp'})
 
           }
           .position({ bottom: 0, right: 0 })

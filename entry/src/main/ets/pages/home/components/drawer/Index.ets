@@ -1,18 +1,20 @@
 import { curves } from '@kit.ArkUI';
 
+import { DrawerList } from './DrawerList'
+
 interface Data {
   color: Color
   txt: string
 }
 
 @Component
-export  struct NavBar {
+export struct NavBar {
   // 侧边栏数据源
   @State datas: Data[] = []
   // 点击item
   @State ckitem: number = 0
   // 侧边栏显示控制器
-  @State isshowing: boolean = false
+  @State isShowing: boolean = false
   // 手指按下x坐标
   private downx: number = 0
   // 手指移动x坐标
@@ -46,21 +48,7 @@ export  struct NavBar {
   build() {
     SideBarContainer(SideBarContainerType.Overlay) {
       Column() { //侧边栏内容区默认宽度240vp
-        ForEach(this.datas, (item: Data, index: number) => {
-          ListItem() {
-            Text(item.txt)
-              .fontSize(24)
-              .fontWeight(FontWeight.Bold)
-              .textAlign(TextAlign.Center)
-              .border({ width: 2, style: BorderStyle.Dotted })
-              .width('100%')
-              .padding(20)
-              .onClick(() => { //点击列表项
-                this.ckitem = index //更新点击下标 进而重新渲染内容区背景颜色
-                animateTo({curve:curves.springMotion()},()=>{this.isshowing = false}) //动画关闭侧边栏
-              })
-          }
-        }, (item: Data) => JSON.stringify(item))
+        DrawerList();
       }.width('100%')
       .height('100%')
       .backgroundColor(Color.Gray)
@@ -68,7 +56,8 @@ export  struct NavBar {
 
       Column() { //内容区
         Text(this.datas[this.ckitem].txt).fontSize(30).fontWeight(FontWeight.Bold)
-      }.width('100%')
+      }
+      .width('100%')
       .height('100%')
       .backgroundColor(this.datas[this.ckitem].color)
       .justifyContent(FlexAlign.Center)
@@ -76,18 +65,22 @@ export  struct NavBar {
         if (event.type == TouchType.Move) {
           this.movex = event.touches[0].x
           if ((this.movex - this.downx) > 50) { //产生了右侧滑动 打开抽屉
-            animateTo({curve:curves.springMotion()},()=>{this.isshowing = true})
+            animateTo({ curve: curves.springMotion() }, () => {
+              this.isShowing = true
+            })
           }
         } else if (event.type == TouchType.Down) {
           this.downx = event.touches[0].x
           // 点击内容区就会关闭抽屉
-          animateTo({curve:curves.springMotion()},()=>{this.isshowing = false})
+          animateTo({ curve: curves.springMotion() }, () => {
+            this.isShowing = false
+          })
         }
       })
     }
     .height('100%')
     .width('100%')
-    .showSideBar($$this.isshowing) //双向绑定 控制抽屉的开和关
+    .showSideBar($$this.isShowing) //双向绑定 控制抽屉的开和关
   }
 }
 
