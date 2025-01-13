@@ -13,6 +13,8 @@ import { display, window } from '@kit.ArkUI';
 import { SkinTheme } from '../../core/Theme'
 import { GlobalContext } from '../../core/GlobalContext'
 import {DrawerList} from './components/drawer/DrawerList'
+import { MusicBar } from '../../components/base/MusicBar'
+
 const TAG = 'foo'
 @Entry
 @Component
@@ -102,8 +104,8 @@ struct Index {
           }
           .height('100%')
 
-          Column(){
-            // 顶部搜索
+          Stack({ alignContent: Alignment.Top }){
+            // 顶部搜索 45vp 高度
             NavBar({ openDrawer: () => {
               animateTo({duration: 550},()=>{this.isShowSideBar = true})
             }})
@@ -112,6 +114,8 @@ struct Index {
             } else {
               HomeBodyHorizontal();
             }
+
+            MusicBar()
           }
           .width('100%')
           .height('100%')
@@ -121,6 +125,7 @@ struct Index {
             }
           })
         }
+        .height('100%')
         .showSideBar($$this.isShowSideBar) //不显示侧边栏
         .showControlButton(false) //不显示控制按钮
         .sideBarWidth('240vp')  //侧边栏宽度

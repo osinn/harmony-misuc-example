@@ -1,6 +1,7 @@
 {
   "src": [
     "pages/home/Index",
+    "pages/local/LocalMusicPage",
     "pages/Second"
   ]
 }

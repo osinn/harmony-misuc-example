@@ -10,23 +10,19 @@ export  struct HomeBody {
   scroller: Scroller = new Scroller()
 
   build() {
-    Row() {
       Column() {
-        Flex({ direction: FlexDirection.Row, alignItems: ItemAlign.Center }) {
-          Scroll(this.scroller) {
-            Operations()
-          }
-          .scrollable(ScrollDirection.Horizontal) //横向
-          .scrollBar(BarState.Off) // 滚动条隐藏
+        Scroll(this.scroller) {
+          Operations()
         }
-        .width('100%')
+        .height('70vp')
         .padding({left: '10vp',right: '10vp'})
-        .height('80vp')
-        .backgroundColor(this.theme.pageBackgroundColor)
+        .scrollable(ScrollDirection.Horizontal) //横向
+        .scrollBar(BarState.Off) // 滚动条隐藏
 
-        Sheets();
+        Sheets({paddingBottom: 148});
       }
-    }
-    .height('100%')
+      .padding({
+        top: '35vp'
+      })
   }
 }

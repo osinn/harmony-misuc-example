@@ -55,6 +55,10 @@
     {
       "name": "multimodaltransion_note_color",
       "value": "#368AEF"
+    },
+    {
+      "name": "title_color",
+      "value": "#556B89"
     }
   ]
 }

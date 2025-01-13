@@ -1,0 +1,64 @@
+{
+  "float": [
+    {
+      "name": "singer_opacity",
+      "value": "0.38"
+    },
+    {
+      "name": "play_width_sm",
+      "value": "120vp"
+    },
+    {
+      "name": "play_width_lg",
+      "value": "150vp"
+    },
+    {
+      "name": "control_icon_height",
+      "value": "24vp"
+    },
+    {
+      "name": "control_icon_width",
+      "value": "24vp"
+    },
+    {
+      "name": "control_icon_margin",
+      "value": "16vp"
+    },
+    {
+      "name": "title_bar_height",
+      "value": "50vp"
+    },
+    {
+      "name": "icon_width",
+      "value": "20vp"
+    },
+    {
+      "name": "icon_height",
+      "value": "20vp"
+    },
+    {
+      "name": "icon_margin",
+      "value": "16vp"
+    },
+    {
+      "name": "header_font_sm",
+      "value": "18fp"
+    },
+    {
+      "name": "header_font_md",
+      "value": "20fp"
+    },
+    {
+      "name": "header_font_lg",
+      "value": "22fp"
+    },
+    {
+      "name": "title_opacity",
+      "value": "0.9"
+    },
+    {
+      "name": "title_padding_left",
+      "value": "10vp"
+    }
+  ]
+}

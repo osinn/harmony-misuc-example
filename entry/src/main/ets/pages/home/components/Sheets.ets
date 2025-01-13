@@ -28,7 +28,7 @@ export struct Sheets {
   @State myMusicSheetList: Array<SheetEntity> = new Array<SheetEntity>();
   @State collectMusicSheetList: Array<SheetEntity> = new Array<SheetEntity>();
   private sheetMoveListItemChildRef = new SheetMoveListItemController()
-
+  @State paddingBottom: number = 0
   aboutToAppear() {
     // console.log("组件初始化")
     this.querySheet();
@@ -184,6 +184,8 @@ export struct Sheets {
           // .alignItems(HorizontalAlign.Center)
           // .justifyContent(FlexAlign.Center)
         }
+        // 148vp
+        .padding({bottom: `${this.paddingBottom} + 'vp'`})
         .height('100%')
         .width('100%')
 
@@ -193,7 +195,6 @@ export struct Sheets {
           .height(0)
       }
       .width('100%')
-      .height('100%')
     }
   }
 }

@@ -195,7 +195,7 @@ export struct SheetMoveListItem {
       LazyForEach(this.data, (item: SheetEntity, index: number) => {
         ListItem() {
           Row() {
-            if (index == 0) {
+            if (item.title === '我喜欢') {
               Image($r("app.media.album_default"))
                 .width('40vp')
                 .height('40vp')
